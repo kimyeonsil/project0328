@@ -6,3 +6,4 @@ public class AppMain {
 		System.out.println((char) a);
 	}
 }
+
