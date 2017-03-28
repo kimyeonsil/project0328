@@ -1,24 +1,12 @@
-/*
-
-for문을 돌릴때마다 버튼(이미지)가 생성되야하는데, 파일정보를 가지고있어
-
-하나의 패널에 묶은 것!
-내가 누른것만 펼쳐지도록 다른 건 닫히고
-전체는 flowLayout
-각각은 패널로 for문 돌리기!
-
-컴퍼넌트를 커스터마이징했다.
-노란색패널이 버튼도가지고있고 라벨도 가지고 있다 - > has a 관계!
-
-*/
 package file;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,67 +14,66 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class FileExplorer extends JFrame {
-
-	JPanel p_north, p_center;
-	ImageIcon icon;
-	JButton bt;
-	JLabel lb;
-
-	public FileExplorer() {
-
-		p_north = new JPanel();
-		p_center = new JPanel();
-
-		File file = new File("C:/java_workspace2/Project0327");
-		File[] dir = file.listFiles();
-
-		for (int i = 0; i<dir.length; i++) {
-			if (dir[i].isDirectory()) {
+public class FileExplorer extends JFrame{
+	File file;
+	File[] dir;
+	ArrayList<JButton> btns;
+	ArrayList<JPanel> panels;
+	String src1 = "C:/java_eclipse_workspace/Project0327/res/folder_down.png";
+	String src2 = "C:/java_eclipse_workspace/Project0327/res/folder_up.png";
+	ImageIcon icon1, icon2;
+	boolean flag = false;
+	
+	public FileExplorer(){
+		file = new File("C:/");
+		dir = file.listFiles();
+		btns = new ArrayList<JButton>();
+		panels = new ArrayList<JPanel>();
+		icon1 = new ImageIcon(src1);
+		icon2 = new ImageIcon(src2);
+		
+		for(int i=0; i<dir.length; i++){
+			if(dir[i].isDirectory()){
+				JPanel panel = new JPanel(new GridLayout(2, 1));
+				JLabel label = new JLabel(dir[i].getName());
+				JButton btn = new JButton(icon1);
 				
-				icon = new ImageIcon("C:/java_workspace2/Project0327/res/folder_off.png");
-				bt = new JButton(icon);
-				lb = new JLabel();
+				btn.setBorderPainted(false);
+				btn.setFocusPainted(false);
+				btn.setContentAreaFilled(false);
+				btn.setOpaque(false);
 				
-				lb.setText(dir[i].getName());
+				btn.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						for(int i=0; i<btns.size(); i++){
+							btns.get(i).setIcon(icon1);
+						}
+						
+						btn.setIcon(icon2);
+					}
+				});
 				
-				p_north.add(lb);
-				p_north.add(bt);
-
+				panel.setLayout(new BorderLayout());
+				panel.add(label, BorderLayout.NORTH);
+				panel.add(btn);
+				
+				btns.add(btn);
+				panels.add(panel);
 			}
 		}
 		
-		add(p_north, BorderLayout.NORTH);
-		add(p_center, BorderLayout.CENTER);
-
-		bt.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				change();
-			}
-		}); 
-
-		bt.setBorderPainted(false);
-		bt.setContentAreaFilled(false);
-		bt.setFocusPainted(false);
-		bt.setOpaque(false);
-		this.setPreferredSize(new Dimension(10, 10));
-
 		setLayout(new FlowLayout());
-		setSize(300, 400);
+		
+		for(int i=0; i<panels.size(); i++){
+			add(panels.get(i));
+		}
+		
+		setBounds(100, 100, 600, 600);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-
 	}
 	
-	public void create() {
-	
-	}
-	
-	public  void change() {
-		
-	}
-
 	public static void main(String[] args) {
 		new FileExplorer();
 	}
